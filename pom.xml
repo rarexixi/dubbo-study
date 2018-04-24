@@ -9,31 +9,9 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>provider</module>
-        <module>consumer</module>
-        <module>service</module>
+        <module>dubbo-study-parent</module>
+        <module>dubbo-study-service</module>
+        <module>dubbo-study-provider</module>
+        <module>dubbo-study-consumer</module>
     </modules>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-
-        <spring-version>4.3.14.RELEASE</spring-version>
-        <thymeleaf-version>3.0.7.RELEASE</thymeleaf-version>
-        <dubbo-version>2.5.3</dubbo-version>
-        <zookeeper-verison>3.4.10</zookeeper-verison>
-        <junit-version>4.12</junit-version>
-    </properties>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.7.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 </project>
