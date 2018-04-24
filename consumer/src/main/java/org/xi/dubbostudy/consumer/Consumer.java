@@ -16,7 +16,7 @@ public class Consumer {
         TestService testService = (TestService) context.getBean("testService");
         System.out.println(new Date());
         for (int i = 0; i < 10000; i++) {
-            testService.hello("xi" + i);
+            testService.hello("xi" + i, "session " + i);
         }
         System.out.println(new Date());
 
