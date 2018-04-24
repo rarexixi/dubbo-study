@@ -1,3 +1,5 @@
+package org.xi.dubbostudy.provider;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Provider {

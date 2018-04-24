@@ -1,0 +1,1 @@
+dubboFilter=org.xi.dubbostudy.provider.filter.DubboFilter
