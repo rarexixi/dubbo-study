@@ -3,59 +3,78 @@ package org.xi.dubbostudy.provider.filter;
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.rpc.*;
+import com.alibaba.dubbo.rpc.service.GenericService;
+import org.apache.commons.lang3.time.StopWatch;
+import org.xi.common.constant.OperationConstants;
+import org.xi.common.model.ResultVo;
+import org.xi.common.utils.AnnotationUtils;
+import org.xi.common.utils.LogUtils;
 import org.xi.dubbostudy.annotation.ParamName;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Activate(group = Constants.PROVIDER)
 public class DubboFilter implements Filter {
 
+    private final LogUtils logger = LogUtils.build(DubboFilter.class);
+
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) {
-        String re = "Error";
-        Result result = null;
 
-        Object name = "";
-        try {
-            long sessionid = System.currentTimeMillis();
-            result = invoker.invoke(invocation);
-            Object sessionId = getSessionId(invoker.getInterface(), invocation.getMethodName(),
-                    invocation.getParameterTypes(), invocation.getArguments());
-        } catch (RuntimeException e) {
-            StringBuffer sb = new StringBuffer("");
-            sb.append("DUBBO-CATCH-EXCEPTION：");
-            sb.append(RpcContext.getContext().getRemoteHost());
-            sb.append(". SERVICE： ");
-            sb.append(invoker.getInterface().getName());
-            sb.append("， METHOD： ");
-            sb.append(invocation.getMethodName());
-            sb.append("， EXCEPTION： ");
-            sb.append(e.getClass().getName());
-            sb.append("：");
-            sb.append(e.getMessage());
-            return new RpcResult(re);
+        // 如果是dubbo自己的服务，直接返回
+        if (GenericService.class == invoker.getInterface()) {
+            return invoker.invoke(invocation);
         }
-        return result;
+
+        String method = "";
+        String sessionId = "";
+
+        try {
+            method = RpcContext.getContext().getRemoteHost() + "-" + invoker.getInterface().getName() + "." + invocation.getMethodName();
+            sessionId = getSessionId(invoker, invocation);
+
+            logger.info(method, sessionId, "Dubbo 服务开始执行", invocation.getArguments());
+
+            // StopWatch 计时
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            Result result = invoker.invoke(invocation);
+            stopWatch.stop();
+
+            if (!result.hasException()) {
+                if (logger.isInfoEnabled()) {
+                    Map<String, Object> args = new HashMap<>(8);
+                    args.put("开始执行时间", stopWatch.getStartTime());
+                    args.put("开始执行时间（用来展示）", new Date(stopWatch.getStartTime()).toString());
+                    args.put("入参", invocation.getArguments());
+                    args.put("出参", result);
+                    args.put("方法执行时长(ms)", stopWatch.getTime());
+                    logger.info(method, sessionId, "Dubbo 服务执行结束", args);
+                }
+                return result;
+            }
+            logger.error(method, sessionId, "服务出现异常", result.getException());
+        } catch (RuntimeException e) {
+            logger.error(method, sessionId, e);
+        }
+        return new RpcResult(new ResultVo<>(OperationConstants.SYSTEM_ERROR));
     }
 
-    Object getSessionId(Class<?> clazz, String methodName, Class<?>[] parameterTypes, Object[] args) {
+    private String getSessionId(Invoker<?> invoker, Invocation invocation) {
 
+        Object sessionId = null;
         try {
-            Method method = clazz.getMethod(methodName, parameterTypes);
-            Parameter[] parameters = method.getParameters();
-            for (int i = 0; i < parameters.length; i++) {
-                Parameter parameter = parameters[i];
-                for (Annotation annotation : parameter.getAnnotations()) {
-                    if (annotation instanceof ParamName && ((ParamName) annotation).value().equalsIgnoreCase("sessionId")) {
-                        return args[i];
-                    }
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            sessionId = AnnotationUtils.getParam(ParamName.class, invoker.getInterface(), invocation.getMethodName(), invocation.getParameterTypes(), invocation.getArguments(), "sessionId");
+        } catch (Exception e) {
+            logger.error("getSessionId", "获取 Session ID 异常", e);
         }
-        return null;
+
+        if (null == sessionId) {
+            sessionId = UUID.randomUUID();
+        }
+        return sessionId.toString();
     }
 }
