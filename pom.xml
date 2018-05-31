@@ -13,5 +13,12 @@
         <module>dubbo-study-service</module>
         <module>dubbo-study-provider</module>
         <module>dubbo-study-consumer</module>
+
+        <module>dsbs-common-parent</module>
+        <module>dsb-study-parent</module>
+        <module>dsbs-common</module>
+        <module>dbsb-service-api</module>
+        <module>dsb-study-provider</module>
+        <module>dsb-study-consumer</module>
     </modules>
 </project>

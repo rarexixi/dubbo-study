@@ -1,0 +1,26 @@
+server:
+  port: 8810
+
+spring:
+  application:
+    name: dubbo-study-provider
+
+dubbo:
+  application:
+    id: dubbo-study-provider
+    name: dubbo-study-provider
+    owner:
+  protocol:
+    id: dubbo
+    name: dubbo
+  provider:
+    group: quick
+    version: 1.0.0
+    timeout: 3000
+  registry:
+    id: zookeeper
+    protocol: zookeeper
+    address: 192.168.20.160:2181
+    group: dubbo
+    version: 1.0.0
+    client: curator
