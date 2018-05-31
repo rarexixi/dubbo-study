@@ -8,7 +8,7 @@ import java.util.Date;
 
 
 public class Consumer {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"dubbo-consumer-beans.xml"});
         context.start();
@@ -16,7 +16,7 @@ public class Consumer {
         TestService testService = (TestService) context.getBean("testService");
         System.out.println(new Date());
         for (int i = 0; i < 10000; i++) {
-            testService.hello("xi" + i, "session " + i);
+            System.out.println(testService.hello("xi" + i, "session " + i));
         }
         System.out.println(new Date());
 

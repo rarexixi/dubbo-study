@@ -8,6 +8,8 @@
 
     <dubbo:registry id="zookeeper" address="zookeeper://192.168.20.160:2181"></dubbo:registry>
 
-    <dubbo:reference interface="org.xi.dubbostudy.service.TestService" id="testService"></dubbo:reference>
+    <dubbo:consumer filter="DubboHystrixFilter"/>
+
+    <dubbo:reference interface="org.xi.dubbostudy.service.TestService" id="testService" check="false"></dubbo:reference>
 
 </beans>

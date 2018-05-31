@@ -1,0 +1,1 @@
+DubboHystrixFilter=org.xi.dubbostudy.consumer.filter.DubboHystrixFilter
