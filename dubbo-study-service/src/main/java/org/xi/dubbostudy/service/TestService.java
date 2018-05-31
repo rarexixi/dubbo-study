@@ -1,6 +1,6 @@
 package org.xi.dubbostudy.service;
 
-import org.xi.dubbostudy.annotation.ParamName;
+import org.xi.common.annotation.ParamName;
 
 public interface TestService {
 

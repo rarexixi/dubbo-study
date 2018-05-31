@@ -5,11 +5,11 @@ import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.rpc.*;
 import com.alibaba.dubbo.rpc.service.GenericService;
 import org.apache.commons.lang3.time.StopWatch;
+import org.xi.common.annotation.ParamName;
 import org.xi.common.constant.OperationConstants;
 import org.xi.common.model.ResultVo;
 import org.xi.common.utils.AnnotationUtils;
 import org.xi.common.utils.LogUtils;
-import org.xi.dubbostudy.annotation.ParamName;
 
 import java.util.Date;
 import java.util.HashMap;
